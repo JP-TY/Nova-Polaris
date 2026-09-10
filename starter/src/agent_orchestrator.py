@@ -220,10 +220,22 @@ def build_inventory_agent() -> Agent:
     """
 
     # TODO: Create a BedrockModel using the WORKER model
-    pass
+    model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.1,
+    )
 
     # TODO: System prompt for the Inventory Agent
-    pass
+    system_prompt = (
+        "You are the NovaMart InventoryAgent, a precise data gatherer. "
+        "Use check_order_status, get_customer_tier, and list_customer_orders to retrieve "
+        "order and customer facts from DynamoDB. Report exactly what the data shows: "
+        "order status, product, dates, amounts, and customer tier. "
+        "You never decide return or refund eligibility, never apply policy windows, "
+        "and never guess missing data. If a record is not found, say so plainly."
+    )
 
     # TODO: Implement check_order_status
     # NOTE: the Orders table has a COMPOSITE key (customer_id = partition key,
@@ -243,7 +255,13 @@ def build_inventory_agent() -> Agent:
             Order record (order_id, status, product_name, order_date, price, ...)
             or a not-found message
         """
-        pass
+        table = dynamodb.Table(config.ORDERS_TABLE)
+        response = table.get_item(Key={'customer_id': customer_id, 'order_id': order_id})
+        item = response.get('Item')
+        if not item:
+            return {'found': False,
+                    'message': f"Order {order_id} for customer {customer_id} was not found."}
+        return {'found': True, 'order': item}
 
     # TODO: Implement get_customer_tier
     @tool
@@ -258,7 +276,13 @@ def build_inventory_agent() -> Agent:
         Returns:
             Customer profile including tier and account details
         """
-        pass
+        table = dynamodb.Table(config.CUSTOMERS_TABLE)
+        response = table.get_item(Key={'customer_id': customer_id})
+        item = response.get('Item')
+        if not item:
+            return {'found': False,
+                    'message': f"Customer {customer_id} was not found."}
+        return {'found': True, 'customer': item}
 
     # TODO: Implement list_customer_orders
     @tool
@@ -272,10 +296,13 @@ def build_inventory_agent() -> Agent:
         Returns:
             List of all orders with order_id, status, order_date, and amount
         """
-        pass
+        table = dynamodb.Table(config.ORDERS_TABLE)
+        response = table.query(KeyConditionExpression=Key('customer_id').eq(customer_id))
+        return {'found': True, 'orders': response.get('Items', [])}
 
     # TODO: Instantiate and return the Agent
-    pass
+    return Agent(model=model, system_prompt=system_prompt,
+                 tools=[check_order_status, get_customer_tier, list_customer_orders])
 
 
 # ───────────────────────────────────────────────────────
