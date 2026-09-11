@@ -318,10 +318,24 @@ def build_refund_agent() -> Agent:
     """
 
     # TODO: Create a BedrockModel
-    pass
+    model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.1,
+    )
 
     # TODO: System prompt for the Refund Agent
-    pass
+    system_prompt = (
+        "You are the NovaMart RefundAgent. You decide return and refund eligibility. "
+        "Always call get_inventory_context first to read the order facts and customer tier "
+        "gathered by the InventoryAgent. Then apply the return window: Standard customers "
+        "have 30 days from delivery, Premium customers have 60 days. Only delivered orders "
+        "within the window are eligible. Compute days since delivery in Python from the "
+        "order_date; never do date math by guessing. If eligible, call initiate_refund. "
+        "If not eligible or facts are missing, explain why and do not issue a refund. "
+        "Cite the tier, the order age in days, and the window in your decision."
+    )
 
     # TODO: Implement get_inventory_context
     @tool
@@ -335,7 +349,8 @@ def build_refund_agent() -> Agent:
         Returns:
             The inventory_agent field from WorkflowState, or empty dict if not yet set
         """
-        pass
+        state = _read_workflow_state(session_id) or {}
+        return state.get('inventory_agent', {}) or {}
 
     # TODO: Implement initiate_refund
     @tool
@@ -351,10 +366,24 @@ def build_refund_agent() -> Agent:
         Returns:
             Confirmation dict with return_reference number and instructions
         """
-        pass
+        table = dynamodb.Table(config.ORDERS_TABLE)
+        return_reference = f"RET-{uuid.uuid4().hex[:8]}"
+        table.update_item(
+            Key={'customer_id': customer_id, 'order_id': order_id},
+            UpdateExpression="SET #st = :st, return_reference = :ref, return_reason = :reason",
+            ExpressionAttributeNames={'#st': 'status'},
+            ExpressionAttributeValues={':st': 'return_initiated', ':ref': return_reference,
+                                       ':reason': reason},
+        )
+        return {'return_reference': return_reference, 'order_id': order_id,
+                'customer_id': customer_id,
+                'message': (f"Return initiated for order {order_id} "
+                            f"(reference {return_reference}). Refunds post within 5-7 business days "
+                            f"of receiving the item.")}
 
     # TODO: Instantiate and return the Agent
-    pass
+    return Agent(model=model, system_prompt=system_prompt,
+                 tools=[get_inventory_context, initiate_refund])
 
 
 # ───────────────────────────────────────────────────────
