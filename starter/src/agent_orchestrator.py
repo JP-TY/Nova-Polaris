@@ -403,28 +403,67 @@ def build_policy_agent() -> Agent:
     @tool
     def retrieve_returns_policy(query: str) -> str:
         """Retrieve relevant passages from the Returns Policy knowledge base."""
-        pass
+        results = retrieve_from_knowledge_base(config.RETURNS_KB_ID, query)
+        return format_kb_results(results)
 
     # Create the ReturnsPolicyRetrieverAgent with the tool above
-    pass
+    returns_model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.0,
+    )
+    returns_retriever = Agent(
+        model=returns_model,
+        system_prompt=("You are the ReturnsPolicyRetrieverAgent. Answer only from the Returns "
+                       "Policy knowledge base using retrieve_returns_policy. Return the retrieved "
+                       "passages faithfully; never invent policy text."),
+        tools=[retrieve_returns_policy],
+    )
 
     # TODO: Build ShippingPolicyRetrieverAgent
     @tool
     def retrieve_shipping_policy(query: str) -> str:
         """Retrieve relevant passages from the Shipping Policy knowledge base."""
-        pass
+        results = retrieve_from_knowledge_base(config.SHIPPING_KB_ID, query)
+        return format_kb_results(results)
 
     # Create the ShippingPolicyRetrieverAgent with the tool above
-    pass
+    shipping_model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.0,
+    )
+    shipping_retriever = Agent(
+        model=shipping_model,
+        system_prompt=("You are the ShippingPolicyRetrieverAgent. Answer only from the Shipping "
+                       "Policy knowledge base using retrieve_shipping_policy. Return the retrieved "
+                       "passages faithfully; never invent policy text."),
+        tools=[retrieve_shipping_policy],
+    )
 
     # TODO: Build WarrantyPolicyRetrieverAgent
     @tool
     def retrieve_warranty_policy(query: str) -> str:
         """Retrieve relevant passages from the Warranty Policy knowledge base."""
-        pass
+        results = retrieve_from_knowledge_base(config.WARRANTY_KB_ID, query)
+        return format_kb_results(results)
 
     # Create the WarrantyPolicyRetrieverAgent with the tool above
-    pass
+    warranty_model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.0,
+    )
+    warranty_retriever = Agent(
+        model=warranty_model,
+        system_prompt=("You are the WarrantyPolicyRetrieverAgent. Answer only from the Warranty "
+                       "Policy knowledge base using retrieve_warranty_policy. Return the retrieved "
+                       "passages faithfully; never invent policy text."),
+        tools=[retrieve_warranty_policy],
+    )
 
     # TODO: Implement search_all_policies - parallel RAG retrieval tool
     @tool
@@ -443,7 +482,11 @@ def build_policy_agent() -> Agent:
         """
         # Build a dict mapping domain names to their retriever agents
         # e.g. {'Returns': returns_retriever, 'Shipping': shipping_retriever, ...}
-        pass
+        retrievers = {
+            'Returns': returns_retriever,
+            'Shipping': shipping_retriever,
+            'Warranty': warranty_retriever,
+        }
 
         # ── Trace: show parallel KB dispatch to learners ──────────────────
         trace.kb_start({
@@ -466,28 +509,53 @@ def build_policy_agent() -> Agent:
             Results are returned as values and printed cleanly and
             sequentially by trace.kb_result() after all futures join.
             """
-            pass
+            result = agent(query)
+            return (domain, str(result))
 
         # Use ThreadPoolExecutor to run all three retrievers in parallel
         # Collect results into a dict: {'Returns': '...', 'Shipping': '...', ...}
-        pass
+        results: dict = {}
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = {
+                executor.submit(_run_retriever, domain, agent, query): domain
+                for domain, agent in retrievers.items()
+            }
+            for future in as_completed(futures):
+                domain, text = future.result()
+                results[domain] = text
 
         # ── Trace: all KBs responded - print each result sequentially ─────
-        # trace.kb_done(len(retrievers))
-        # for domain in ['Returns', 'Shipping', 'Warranty']:
-        #     trace.kb_result(domain, results.get(domain, '[No results]'))
+        trace.kb_done(len(retrievers))
+        for domain in ['Returns', 'Shipping', 'Warranty']:
+            trace.kb_result(domain, results.get(domain, '[No results]'))
 
         # Combine results from all three domains and return
-        pass
+        combined = []
+        for domain in ['Returns', 'Shipping', 'Warranty']:
+            combined.append(f"===== {domain} Policy =====\n{results.get(domain, '[No results]')}")
+        return "\n\n".join(combined)
 
     # TODO: Create a BedrockModel for the PolicyAgent coordinator
-    pass
+    coordinator_model = BedrockModel(
+        model_id=config.WORKER_MODEL_ID,
+        region_name=config.AWS_REGION,
+        streaming=False,
+        temperature=0.2,
+    )
 
     # TODO: System prompt for PolicyAgent coordinator
-    pass
+    coordinator_prompt = (
+        "You are the NovaMart PolicyAgent, a multi-agent RAG coordinator. "
+        "Always call search_all_policies first for any policy question, then synthesize "
+        "the retrieved passages from the Returns, Shipping, and Warranty knowledge bases "
+        "into one complete, grounded answer. Quote the relevant passages and note which "
+        "domain each fact came from. Never invent policy text beyond what was retrieved. "
+        "If a domain returned nothing relevant, say so instead of guessing."
+    )
 
     # TODO: Instantiate and return the PolicyAgent coordinator
-    pass
+    return Agent(model=coordinator_model, system_prompt=coordinator_prompt,
+                 tools=[search_all_policies])
 
 
 # ───────────────────────────────────────────────────────
