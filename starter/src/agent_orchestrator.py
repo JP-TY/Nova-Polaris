@@ -953,7 +953,54 @@ def create_guardrail() -> tuple[str, str]:
     # bedrock_client.create_guardrail_version(guardrailIdentifier=...)
     # and return (guardrail_id, guardrail_version).
 
-    pass
+    topic_definitions = {
+        "competitor products": ("Competitor products",
+                                "Do not discuss, compare, or recommend competitor products or brands."),
+        "pricing negotiations": ("Pricing negotiations",
+                                 "Do not negotiate prices, discounts, or special deals beyond published policy."),
+        "legal threats": ("Legal threats",
+                          "Do not respond to legal threats or provide legal advice; direct the customer to support."),
+    }
+    topics = []
+    for entry in config.GUARDRAIL_BLOCKED_TOPICS:
+        name, definition = topic_definitions.get(
+            entry, (entry[:100], f"Denied topic: {entry}"))
+        topics.append({'name': name, 'definition': definition, 'type': 'DENY'})
+
+    created = bedrock_client.create_guardrail(
+        name=config.GUARDRAIL_NAME,
+        description="NovaMart customer support safety guardrail: content, PII, topics, profanity.",
+        contentPolicyConfig={
+            'filtersConfig': [
+                {'type': 'SEXUAL', 'inputStrength': 'HIGH', 'outputStrength': 'HIGH'},
+                {'type': 'VIOLENCE', 'inputStrength': 'HIGH', 'outputStrength': 'HIGH'},
+                {'type': 'HATE', 'inputStrength': 'HIGH', 'outputStrength': 'HIGH'},
+                {'type': 'INSULTS', 'inputStrength': 'MEDIUM', 'outputStrength': 'MEDIUM'},
+                {'type': 'MISCONDUCT', 'inputStrength': 'MEDIUM', 'outputStrength': 'MEDIUM'},
+            ],
+        },
+        sensitiveInformationPolicyConfig={
+            'piiEntitiesConfig': [
+                {'type': 'CREDIT_DEBIT_CARD_NUMBER', 'action': 'BLOCK'},
+                {'type': 'US_SOCIAL_SECURITY_NUMBER', 'action': 'BLOCK'},
+                {'type': 'EMAIL', 'action': 'ANONYMIZE'},
+                {'type': 'PHONE', 'action': 'ANONYMIZE'},
+            ],
+        },
+        topicPolicyConfig={'topicsConfig': topics},
+        wordPolicyConfig={'managedWordListsConfig': [{'type': 'PROFANITY'}]},
+        blockedInputMessaging=("Sorry, I can't help with that request. "
+                               "Let me help with your NovaMart order or policy question instead."),
+        blockedOutputsMessaging=("Sorry, I can't share that response. "
+                                 "Let me help with your NovaMart order or policy question instead."),
+    )
+    guardrail_id = created['guardrailId']
+
+    versioned = bedrock_client.create_guardrail_version(guardrailIdentifier=guardrail_id)
+    guardrail_version = str(versioned['version'])
+    print(f"Guardrail created: {guardrail_id} (version: {guardrail_version})")
+    return guardrail_id, guardrail_version
+
 
 def deploy_to_agentcore_runtime(
     orchestrator_agent: Agent,
@@ -1017,7 +1064,30 @@ def deploy_to_agentcore_runtime(
     #     SHIPPING_KB_ID, WARRANTY_KB_ID, AGENT_LOG_GROUP, and the guardrail
     #     (GUARDRAIL_ID = guardrail_id, GUARDRAIL_VERSION = guardrail_version)
     # Store the API response in `response`.
-    response = None
+    response = agentcore_control.create_agent_runtime(
+        agentRuntimeName=runtime_name,
+        description="NovaMart multi-agent customer support system (Orchestrator-Workers).",
+        roleArn=config.AGENTCORE_ROLE_ARN,
+        agentRuntimeArtifact={
+            'codeConfiguration': {
+                'code': {'s3': {'bucket': config.POLICY_BUCKET, 'prefix': artifact_key}},
+                'runtime': RUNTIME_PYTHON,
+                'entryPoint': [RUNTIME_ENTRYPOINT],
+            },
+        },
+        networkConfiguration={'networkMode': 'PUBLIC'},
+        protocolConfiguration={'serverProtocol': 'HTTP'},
+        environmentVariables={
+            'AWS_REGION': config.AWS_REGION,
+            'PROJECT_NAME': config.PROJECT_NAME,
+            'RETURNS_KB_ID': config.RETURNS_KB_ID,
+            'SHIPPING_KB_ID': config.SHIPPING_KB_ID,
+            'WARRANTY_KB_ID': config.WARRANTY_KB_ID,
+            'AGENT_LOG_GROUP': config.AGENT_LOG_GROUP,
+            'GUARDRAIL_ID': guardrail_id,
+            'GUARDRAIL_VERSION': guardrail_version,
+        },
+    )
 
     if response is None:
         raise NotImplementedError("deploy_to_agentcore_runtime: create_agent_runtime() not implemented")
@@ -1061,7 +1131,17 @@ def configure_memory(runtime_arn: str) -> str:
     #         'namespaces': ['/summaries/{actorId}/{sessionId}']}}]
     #   - clientToken (e.g. str(uuid.uuid4())) for idempotency
     # Store the API response in `response`.
-    response = None
+    response = agentcore_control.create_memory(
+        name=memory_name,
+        description=("NovaMart customer support session memory: rolling SESSION_SUMMARY "
+                     "so customers do not repeat themselves across turns."),
+        eventExpiryDuration=7,
+        memoryStrategies=[{'summaryMemoryStrategy': {
+            'name': 'SessionSummary',
+            'namespaces': ['/summaries/{actorId}/{sessionId}'],
+        }}],
+        clientToken=str(uuid.uuid4()),
+    )
 
     if response is None:
         raise NotImplementedError("configure_memory: create_memory() not implemented")
@@ -1110,7 +1190,19 @@ def configure_observability(runtime_arn: str) -> None:
     # and the X-Ray sampling rate; on exception print
     #   "[Note] Observability configuration failed: <e>"
 
-    pass
+    logging_configuration = {
+        'cloudWatchConfig': {'logGroupName': config.AGENT_LOG_GROUP,
+                             'logLevel': 'INFO', 'enabled': True},
+        'xRayConfig':       {'enabled': True, 'samplingRate': 1.0},
+    }
+    try:
+        summary = apply_observability_config(runtime_arn, logging_configuration)
+        print(f"  CloudWatch log group: {summary.get('log_group')}")
+        xray = summary.get('xray', {}) or {}
+        print(f"  X-Ray sampling: {xray.get('indexing_percent', 100)}% "
+              f"-> {xray.get('destination', 'CloudWatchLogs')}")
+    except Exception as e:
+        print(f"[Note] Observability configuration failed: {e}")
 
 
 # ═══════════════════════════════════════════════════════
