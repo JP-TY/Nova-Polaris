@@ -673,7 +673,8 @@ def build_orchestrator_agent(
         """
         trace.step_start('inventory_agent')
         state = _read_workflow_state(session_id) or {}
-        result = str(inventory_agent(request))
+        result = str(inventory_agent(
+            f"[Session ID: {session_id}] [Customer ID: {customer_id}] {request}"))
         _update_workflow_state(session_id, {'inventory_agent': result},
                                int(state.get('version', 0)))
         trace.step_done('inventory_agent', int(state.get('version', 0)))
@@ -695,7 +696,8 @@ def build_orchestrator_agent(
         """
         trace.step_start('policy_agent')
         state = _read_workflow_state(session_id) or {}
-        result = str(policy_agent(request))
+        result = str(policy_agent(
+            f"[Session ID: {session_id}] {request}"))
         _update_workflow_state(session_id, {'policy_agent': result},
                                int(state.get('version', 0)))
         trace.step_done('policy_agent', int(state.get('version', 0)))
@@ -718,7 +720,8 @@ def build_orchestrator_agent(
         """
         trace.step_start('refund_agent')
         state = _read_workflow_state(session_id) or {}
-        result = str(refund_agent(request))
+        result = str(refund_agent(
+            f"[Session ID: {session_id}] [Customer ID: {customer_id}] {request}"))
         _update_workflow_state(session_id, {'refund_agent': result},
                                int(state.get('version', 0)))
         trace.step_done('refund_agent', int(state.get('version', 0)))
@@ -766,10 +769,8 @@ def build_orchestrator_agent(
         try:
             _create_workflow_state(session_id, customer_id)
             return f"Session {session_id} initialized for customer {customer_id}."
-        except Exception as exc:
-            if 'ConditionalCheckFailed' in type(exc).__name__ or 'already exists' in str(exc):
-                return f"Session {session_id} already initialized for customer {customer_id}."
-            raise
+        except dynamodb.meta.client.exceptions.ConditionalCheckFailedException:
+            return f"Session {session_id} already initialized for customer {customer_id}."
 
     # TODO: Instantiate and return the OrchestratorAgent
     return Agent(
@@ -954,10 +955,16 @@ def create_guardrail() -> tuple[str, str]:
     # and return (guardrail_id, guardrail_version).
 
     topic_definitions = {
+        # NOTE: the pricing topic is deliberately scoped to threats/demands.
+        # A broader "no discounts" wording makes the classifier block legitimate
+        # arithmetic (e.g. "5 items at $29.99 with 10% off"), which breaks the
+        # direct-answer math scenario. Verified via ApplyGuardrail assessments.
         "competitor products": ("Competitor products",
                                 "Do not discuss, compare, or recommend competitor products or brands."),
-        "pricing negotiations": ("Pricing negotiations",
-                                 "Do not negotiate prices, discounts, or special deals beyond published policy."),
+        "pricing negotiations": ("Threats over competitor pricing",
+                                 "Threatening chargebacks, reviews, or lawsuits to force lower pricing, "
+                                 "or demanding a competitor price match. Rate questions and list-price "
+                                 "math are not this topic."),
         "legal threats": ("Legal threats",
                           "Do not respond to legal threats or provide legal advice; direct the customer to support."),
     }
