@@ -1,0 +1,93 @@
+{
+  "traces": [
+    "1-6ab2be26-a483b842a6929b8890c78597",
+    "1-6ab2be5f-95f40d0e50c99ce29bceef80",
+    "1-6ab2be8d-d95fde14924f3394e8a0460b"
+  ],
+  "region": "us-east-1",
+  "nodes": {
+    "NovaMart-Orchestrator": 3,
+    "initialize_session": 3,
+    "RefundAgent": 2,
+    "get_inventory_context": 1,
+    "InventoryAgent": 2,
+    "check_order_status": 1,
+    "get_customer_tier": 1,
+    "CommunicationAgent": 4,
+    "get_full_workflow_context": 2,
+    "PolicyAgent": 2,
+    "search_all_policies": 1,
+    "retrieve_returns_policy": 1,
+    "KnowledgeBase:returns": 2,
+    "retrieve_warranty_policy": 1,
+    "KnowledgeBase:warranty": 2,
+    "retrieve_shipping_policy": 1,
+    "KnowledgeBase:shipping": 2
+  },
+  "edges": [
+    [
+      "CommunicationAgent",
+      "get_full_workflow_context"
+    ],
+    [
+      "InventoryAgent",
+      "check_order_status"
+    ],
+    [
+      "InventoryAgent",
+      "get_customer_tier"
+    ],
+    [
+      "NovaMart-Orchestrator",
+      "CommunicationAgent"
+    ],
+    [
+      "NovaMart-Orchestrator",
+      "InventoryAgent"
+    ],
+    [
+      "NovaMart-Orchestrator",
+      "PolicyAgent"
+    ],
+    [
+      "NovaMart-Orchestrator",
+      "RefundAgent"
+    ],
+    [
+      "NovaMart-Orchestrator",
+      "initialize_session"
+    ],
+    [
+      "PolicyAgent",
+      "search_all_policies"
+    ],
+    [
+      "RefundAgent",
+      "get_inventory_context"
+    ],
+    [
+      "retrieve_returns_policy",
+      "KnowledgeBase:returns"
+    ],
+    [
+      "retrieve_shipping_policy",
+      "KnowledgeBase:shipping"
+    ],
+    [
+      "retrieve_warranty_policy",
+      "KnowledgeBase:warranty"
+    ],
+    [
+      "search_all_policies",
+      "retrieve_returns_policy"
+    ],
+    [
+      "search_all_policies",
+      "retrieve_shipping_policy"
+    ],
+    [
+      "search_all_policies",
+      "retrieve_warranty_policy"
+    ]
+  ]
+}

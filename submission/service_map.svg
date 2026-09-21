@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" role="img" aria-label="Nova-Polaris X-Ray service map">
+  <defs>
+    <style>
+      .paper { fill: oklch(98.5% 0.008 240); }
+      .node { fill: oklch(96% 0.01 250); stroke: oklch(88% 0.012 250); stroke-width: 1.5; rx: 10; }
+      .root { fill: oklch(22% 0.03 270); }
+      .edge { stroke: oklch(62% 0.14 215); stroke-width: 1.8; fill: none; }
+      .kb-edge { stroke: oklch(62% 0.14 290); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+      text { font-family: "IBM Plex Sans", system-ui, sans-serif; }
+      .t { font-size: 14px; font-weight: 650; fill: oklch(22% 0.03 270); }
+      .t-root { font-size: 15px; font-weight: 700; fill: oklch(93% 0.01 250); }
+      .s { font-size: 11.5px; fill: oklch(38% 0.04 270); }
+      .s-root { font-size: 12px; fill: oklch(72% 0.02 250); }
+      .h { font-size: 20px; font-weight: 700; fill: oklch(22% 0.03 270); font-family: "Instrument Serif", Georgia, serif; font-style: normal; }
+      .cap { font-size: 12px; fill: oklch(38% 0.04 270); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="oklch(62% 0.14 215)"/>
+    </marker>
+  </defs>
+  <rect class="paper" width="980" height="560" rx="14"/>
+  <text class="h" x="36" y="44">Nova-Polaris Service Map</text>
+  <text class="cap" x="36" y="66">Route. Ground. Resolve. · Rendered from live X-Ray trace segments · traces 1-6ab2be26, 1-6ab2be5f, 1-6ab2be8d (us-east-1)</text>
+
+  <!-- root -->
+  <rect class="node root" x="36" y="230" width="200" height="72"/>
+  <text class="t-root" x="52" y="258">NovaMart-Orchestrator</text>
+  <text class="s-root" x="52" y="278">3 traces · Haiku 4.5</text>
+
+  <!-- workers -->
+  <rect class="node" x="330" y="110" width="200" height="64"/>
+  <text class="t" x="346" y="136">InventoryAgent</text>
+  <text class="s" x="346" y="156">DynamoDB lookups</text>
+
+  <rect class="node" x="330" y="200" width="200" height="64"/>
+  <text class="t" x="346" y="226">PolicyAgent</text>
+  <text class="s" x="346" y="246">multi-agent RAG</text>
+
+  <rect class="node" x="330" y="290" width="200" height="64"/>
+  <text class="t" x="346" y="316">RefundAgent</text>
+  <text class="s" x="346" y="336">eligibility decisions</text>
+
+  <rect class="node" x="330" y="380" width="200" height="64"/>
+  <text class="t" x="346" y="406">CommunicationAgent</text>
+  <text class="s" x="346" y="426">final response</text>
+
+  <!-- retrievers -->
+  <rect class="node" x="620" y="140" width="150" height="56"/>
+  <text class="t" x="634" y="162" font-size="12">ReturnsRetr.</text>
+  <text class="s" x="634" y="180">parallel</text>
+
+  <rect class="node" x="620" y="208" width="150" height="56"/>
+  <text class="t" x="634" y="230" font-size="12">ShippingRetr.</text>
+  <text class="s" x="634" y="248">parallel</text>
+
+  <rect class="node" x="620" y="276" width="150" height="56"/>
+  <text class="t" x="634" y="298" font-size="12">WarrantyRetr.</text>
+  <text class="s" x="634" y="316">parallel</text>
+
+  <!-- KBs -->
+  <rect class="node" x="820" y="140" width="130" height="56"/>
+  <text class="t" x="832" y="162" font-size="12">KB:returns</text>
+  <text class="s" x="832" y="180">S3 Vectors</text>
+
+  <rect class="node" x="820" y="208" width="130" height="56"/>
+  <text class="t" x="832" y="230" font-size="12">KB:shipping</text>
+  <text class="s" x="832" y="248">S3 Vectors</text>
+
+  <rect class="node" x="820" y="276" width="130" height="56"/>
+  <text class="t" x="832" y="298" font-size="12">KB:warranty</text>
+  <text class="s" x="832" y="316">S3 Vectors</text>
+
+  <!-- edges -->
+  <path class="edge" d="M236 252 C 280 252, 286 142, 328 142" marker-end="url(#arr)"/>
+  <path class="edge" d="M236 262 C 280 262, 286 232, 328 232" marker-end="url(#arr)"/>
+  <path class="edge" d="M236 272 C 280 272, 286 322, 328 322" marker-end="url(#arr)"/>
+  <path class="edge" d="M236 282 C 280 282, 286 412, 328 412" marker-end="url(#arr)"/>
+  <path class="edge" d="M530 222 C 575 222, 575 168, 618 168" marker-end="url(#arr)"/>
+  <path class="edge" d="M530 232 C 575 232, 575 236, 618 236" marker-end="url(#arr)"/>
+  <path class="edge" d="M530 242 C 575 242, 575 304, 618 304" marker-end="url(#arr)"/>
+  <path class="kb-edge" d="M770 168 L818 168" marker-end="url(#arr)"/>
+  <path class="kb-edge" d="M770 236 L818 236" marker-end="url(#arr)"/>
+  <path class="kb-edge" d="M770 304 L818 304" marker-end="url(#arr)"/>
+
+  <text class="cap" x="36" y="500">Edges verified via BatchGetTraces: Orchestrator to 4 workers, PolicyAgent to search_all_policies,</text>
+  <text class="cap" x="36" y="520">fan-out to 3 retrievers, each to its KnowledgeBase node. Shared state: DynamoDB WorkflowStateTable.</text>
+</svg>
