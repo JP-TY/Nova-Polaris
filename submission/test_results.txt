@@ -1,0 +1,133 @@
+
+[1m[96m───────────────────────────────────────────────────────[0m
+[1m[96m  Task 2 - Multi-Agent Orchestration[0m
+[1m[96m───────────────────────────────────────────────────────[0m
+  [92m✓ PASS[0m [+5pts] build_inventory_agent() returns an Agent object
+  [92m✓ PASS[0m [+5pts] InventoryAgent has 3 tools (3 found)
+  [92m✓ PASS[0m [+5pts] build_policy_agent() returns an Agent object
+  [92m✓ PASS[0m [+5pts] PolicyAgent has 1 tool (1 found)
+  [92m✓ PASS[0m [+5pts] build_orchestrator_agent() returns an Agent object
+  [92m✓ PASS[0m [+5pts] OrchestratorAgent has 5 routing tools (5 found)
+  [92m✓ PASS[0m [+5pts] OrchestratorAgent uses config.ORCHESTRATOR_MODEL_ID (Claude Haiku 4.5 - correct for routing)
+  [92m✓ PASS[0m [+5pts] Worker agents use config.WORKER_MODEL_ID (Claude Sonnet 4.5 - correct for reasoning)
+  [92m✓ PASS[0m [+0pts] build_policy_agent() runs the retrievers with ThreadPoolExecutor
+
+[1m[96m───────────────────────────────────────────────────────[0m
+[1m[96m  Task 3 - AgentCore Deployment + Guardrails[0m
+[1m[96m───────────────────────────────────────────────────────[0m
+  [92m✓ PASS[0m [+5pts] Guardrail 'udacity-agentcore-guardrail' exists in Bedrock
+  [92m✓ PASS[0m [+5pts] Guardrail content, PII, topic and word policies match the specification
+  [92m✓ PASS[0m [+3pts] Guardrail version 4 is published and READY
+  [92m✓ PASS[0m [+7pts] AgentCore Runtime is READY (PUBLIC / HTTP) with guardrail + KB environment variables
+
+[1m[96m───────────────────────────────────────────────────────[0m
+[1m[96m  Task 4 - Memory[0m
+[1m[96m───────────────────────────────────────────────────────[0m
+  [92m✓ PASS[0m [+5pts] AgentCore Memory udacity_agentcore_memory-ZzLz6pFv51 is ACTIVE
+  [92m✓ PASS[0m [+5pts] Memory uses the SESSION_SUMMARY (summaryMemoryStrategy) strategy
+  [92m✓ PASS[0m [+5pts] Memory eventExpiryDuration is 7 days
+
+[1m[96m───────────────────────────────────────────────────────[0m
+[1m[96m  Task 5 - Bedrock Knowledge Bases[0m
+[1m[96m───────────────────────────────────────────────────────[0m
+  [92m✓ PASS[0m [+5pts] RETURNS_KB_ID is set in environment (5JZE4EVDES)
+  [92m✓ PASS[0m [+0pts] Returns Knowledge Base is ACTIVE
+  [92m✓ PASS[0m [+0pts] Returns KB uses amazon.titan-embed-text-v2:0
+  [92m✓ PASS[0m [+0pts] Returns KB data source has a completed sync
+  [92m✓ PASS[0m [+5pts] SHIPPING_KB_ID is set in environment (HNA3JVP0C2)
+  [92m✓ PASS[0m [+0pts] Shipping Knowledge Base is ACTIVE
+  [92m✓ PASS[0m [+0pts] Shipping KB uses amazon.titan-embed-text-v2:0
+  [92m✓ PASS[0m [+0pts] Shipping KB data source has a completed sync
+  [92m✓ PASS[0m [+5pts] WARRANTY_KB_ID is set in environment (1TTCSLBBBQ)
+  [92m✓ PASS[0m [+0pts] Warranty Knowledge Base is ACTIVE
+  [92m✓ PASS[0m [+0pts] Warranty KB uses amazon.titan-embed-text-v2:0
+  [92m✓ PASS[0m [+0pts] Warranty KB data source has a completed sync
+  [92m✓ PASS[0m [+5pts] All three Knowledge Bases return passages for a policy question
+    [PARALLEL RETRIEVAL - START]  Spawning 3 sub-agents concurrently via ThreadPoolExecutor
+    ──────────────────────────────────────────────────────
+    +-- [SUB-AGENT 01]  ReturnsRetriever   KB-ID: 5JZE4EVDES
+    +-- [SUB-AGENT 02]  ShippingRetriever  KB-ID: HNA3JVP0C2
+    +-- [SUB-AGENT 03]  WarrantyRetriever  KB-ID: 1TTCSLBBBQ
+    Retrieving in parallel... (sub-agent output suppressed - clean results printed sequentially after [END])
+
+Tool #1: retrieve_returns_policy
+
+Tool #2: retrieve_returns_policy
+
+Tool #1: retrieve_shipping_policy
+
+Tool #2: retrieve_shipping_policy
+I'll help you find information about the return window for premium customers and warranty duration from the Warranty Policy.
+Tool #1: retrieve_warranty_policy
+
+Tool #2: retrieve_warranty_policy
+Based on the Returns Policy knowledge base:
+
+**Return Window for Premium Customers:**
+Premium tier customers receive an **extended 60-day return window** (compared to the standard 30-day window for regular customers).
+
+**Warranty:**
+The warranty duration depends on your customer tier:
+- **Premium tier customers**: **3-year warranty on electronics**
+- **Standard tier customers**: 1-year warranty on electronics
+
+To qualify for Premium tier status, customers need to either spend $500+ in a calendar year OR place 20+ orders in a calendar year.Based on the Warranty Policy, here's the information for premium customers:
+
+**Return Window for Premium Customers:**
+- **60-day return window** (extended from the standard 30-day window)
+
+**Warranty for Premium Customers:**
+- **3-year warranty on electronics** (compared to the standard 1-year warranty on all products and 2-year warranty on electronics)
+
+According to the policy, customers qualify for Premium tier by spending $500+ in a calendar year OR placing 20+ orders in a calendar year. Once upgraded, they automatically receive these enhanced benefits including the extended return window and warranty coverage.Based on the Shipping Policy knowledge base:
+
+**Premium Customer Return Window:**
+- Premium tier customers have an **extended 60-day return window**
+
+**Warranty Period:**
+- Premium tier customers receive a **3-year warranty on electronics**
+
+For comparison, Standard tier customers have a 30-day return window and 1-year warranty on electronics.    ──────────────────────────────────────────────────────
+    [PARALLEL RETRIEVAL - END]  All 3 KBs responded  Elapsed: 9.4s
+
+    [SUB-AGENT 01]  ReturnsRetriever   KB: 5JZE4EVDES
+      | Based on the Returns Policy knowledge base:
+      | **Return Window for Premium Customers:**
+      | Premium tier customers receive an **extended 60-day return window** (compared to the standard 30-day window for regular customers).
+      | **Warranty:**
+      | The warranty duration depends on your customer tier:
+      | - **Premium tier customers**: **3-year warranty on electronics**
+      | - **Standard tier customers**: 1-year warranty on electronics
+      | To qualify for Premium tier status, customers need to either spend $500+ in a calendar year OR place 20+ orders in a calendar year.
+
+    [SUB-AGENT 02]  ShippingRetriever  KB: HNA3JVP0C2
+      | Based on the Shipping Policy knowledge base:
+      | **Premium Customer Return Window:**
+      | - Premium tier customers have an **extended 60-day return window**
+      | **Warranty Period:**
+      | - Premium tier customers receive a **3-year warranty on electronics**
+      | For comparison, Standard tier customers have a 30-day return window and 1-year warranty on electronics.
+
+    [SUB-AGENT 03]  WarrantyRetriever  KB: 1TTCSLBBBQ
+      | Based on the Warranty Policy, here's the information for premium customers:
+      | **Return Window for Premium Customers:**
+      | - **60-day return window** (extended from the standard 30-day window)
+      | **Warranty for Premium Customers:**
+      | - **3-year warranty on electronics** (compared to the standard 1-year warranty on all products and 2-year warranty on electronics)
+      | According to the policy, customers qualify for Premium tier by spending $500+ in a calendar year OR placing 20+ orders in a calendar year. Once upgraded, they automatically receive these enhanced benefits including the extended return window and warranty coverage.
+  [92m✓ PASS[0m [+5pts] search_all_policies() returned combined results from the three retrievers (9.4s)
+
+[1m[96m───────────────────────────────────────────────────────[0m
+[1m[96m  Task 6 - Observability[0m
+[1m[96m───────────────────────────────────────────────────────[0m
+  [92m✓ PASS[0m [+10pts] CloudWatch logging enabled at INFO level → /aws/bedrock/agentcore/udacity-agentcore
+  [96mℹ INFO[0m latest agent log stream: local/archlinux/2026-09-23/0ee42c01 (3 min ago)
+  [92m✓ PASS[0m [+10pts] X-Ray tracing enabled: 100% sampling, Transaction Search → CloudWatch Logs (ACTIVE)
+  [96mℹ INFO[0m 9 NovaMart trace(s) received by X-Ray in the last 6 hours - open CloudWatch → X-Ray traces → Service map for the screenshot
+
+═══════════════════════════════════════════════════════
+  [1mScore: [92m120/120 pts (100%)[0m
+═══════════════════════════════════════════════════════
+
+  [92m[1m🎉 Perfect score! All tasks complete.[0m
+
