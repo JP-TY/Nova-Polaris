@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Nova-Polaris mark">
+  <circle cx="32" cy="32" r="26" fill="none" stroke="var(--accent-route)" stroke-width="2.5"/>
+  <circle cx="32" cy="32" r="17" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" opacity="0.6"/>
+  <path d="M32 6 L35 29 L58 32 L35 35 L32 58 L29 35 L6 32 L29 29 Z" fill="var(--accent-route)"/>
+  <circle cx="32" cy="32" r="3.5" fill="var(--paper-doc)"/>
+</svg>
