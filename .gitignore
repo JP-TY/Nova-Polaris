@@ -1,0 +1,26 @@
+# ── Nova-Polaris root ignores ─────────────────────────────
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfplan
+terraform/.terraform.lock.hcl
+# AgentCore deployment artifacts
+starter/build/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+# Env & secrets (belt and suspenders alongside starter/.gitignore)
+.env
+.env.*
+*.pem
+*.key
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
