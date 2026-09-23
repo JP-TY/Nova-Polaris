@@ -4,13 +4,15 @@ import {TransitionSeries, linearTiming} from '@remotion/transitions';
 import {fade} from '@remotion/transitions/fade';
 import {slide} from '@remotion/transitions/slide';
 import {TitleScene} from './TitleScene';
-import {ArchitectureScene} from './ArchitectureScene';
-import {TraceScene} from './TraceScene';
+import {ConsoleScene} from './ConsoleScene';
+import {GraphScene} from './GraphScene';
+import {FeaturesScene} from './FeaturesScene';
 import {ScoresScene} from './ScoresScene';
 import {OutroScene} from './OutroScene';
 
 const FPS = 30;
-const SCENES = [120, 180, 210, 150, 90];
+// Title, live console chat, orchestration graph, feature grid, scores, outro
+const SCENES = [90, 300, 270, 180, 135, 90];
 const TRANSITION = 12;
 const TOTAL = SCENES.reduce((a, b) => a + b, 0) - TRANSITION * (SCENES.length - 1);
 
@@ -22,24 +24,28 @@ export const NovaPolarisDemo: React.FC = () => {
       </TransitionSeries.Sequence>
       <TransitionSeries.Transition presentation={fade()} timing={linearTiming({durationInFrames: TRANSITION})} />
       <TransitionSeries.Sequence durationInFrames={SCENES[1]}>
-        <ArchitectureScene />
+        <ConsoleScene />
       </TransitionSeries.Sequence>
       <TransitionSeries.Transition
         presentation={slide({direction: 'from-right'})}
         timing={linearTiming({durationInFrames: TRANSITION})}
       />
       <TransitionSeries.Sequence durationInFrames={SCENES[2]}>
-        <TraceScene />
+        <GraphScene />
       </TransitionSeries.Sequence>
       <TransitionSeries.Transition presentation={fade()} timing={linearTiming({durationInFrames: TRANSITION})} />
       <TransitionSeries.Sequence durationInFrames={SCENES[3]}>
-        <ScoresScene />
+        <FeaturesScene />
       </TransitionSeries.Sequence>
       <TransitionSeries.Transition
         presentation={slide({direction: 'from-right'})}
         timing={linearTiming({durationInFrames: TRANSITION})}
       />
       <TransitionSeries.Sequence durationInFrames={SCENES[4]}>
+        <ScoresScene />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={linearTiming({durationInFrames: TRANSITION})} />
+      <TransitionSeries.Sequence durationInFrames={SCENES[5]}>
         <OutroScene />
       </TransitionSeries.Sequence>
     </TransitionSeries>
