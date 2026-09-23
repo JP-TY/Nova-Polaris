@@ -20,7 +20,7 @@ Calm, precise, navigational. Voice is technical and quiet. No hype, no emojis in
 
 ## Anti-references
 
-No dark-blue ops cliche dashboards. No SaaS hero-metric bands with big numbers and gradient accents. No identical card grids. No gradient text, no glassmorphism as default, no side-stripe borders, no modals as first thought.
+No SaaS hero-metric bands with big numbers and gradient accents. No identical card grids. No gradient text, no glassmorphism as default, no side-stripe borders, no modals as first thought. Dark is a deliberate full-console choice (DESIGN.md), not a neon cyan cliché.
 
 ## Design Principles
 

@@ -5,9 +5,9 @@
 
 ## Theme
 
-Scene: hiring manager scans README and live console in a bright office, then opens the X-Ray trace and WorkflowState timeline to verify grounding. Needs instant readability, not night-ops glow.
+Scene: hiring manager scans README and live console in a bright office, then opens the X-Ray trace and WorkflowState timeline to verify grounding. Instant readability on a night-ops console.
 
-Decision: light paper default with dark chat inset only. The shell (rail, inspector, status bar) stays light; the conversation card is the single dark object. Avoids first-order reflex (observability equals dark blue) and second-order trap (terminal-native dark mode everywhere). All raw oklch values live as named tokens in globals.css.
+Decision: fully dark throughout. Shell (rail, inspector, status bar) and chat card share one night system — elevated message surfaces, soft borders, accents lifted for contrast on dark. Avoids first-order light-only reflex. All raw oklch values live as named tokens in globals.css. Graph/Title/Outro demo scenes already used the same dark stage.
 
 Color strategy: Restrained. Tinted neutrals plus one accent at or under 10 percent, with two semantic roles used deliberately (cite violet, risk amber).
 
@@ -17,18 +17,18 @@ All color as OKLCH tokens, referenced by name. No inline hex in components.
 
 ```css
 :root {
-  --paper-doc: oklch(98.5% 0.008 240);
-  --paper-console: oklch(24% 0.03 270);
-  --paper-panel: oklch(96% 0.01 250);
-  --ink: oklch(22% 0.03 270);
-  --ink-soft: oklch(38% 0.04 270);
-  --line: oklch(88% 0.012 250);
-  --accent-route: oklch(62% 0.14 215);
-  --accent-ground: oklch(62% 0.14 290);
-  --accent-resolve: oklch(68% 0.12 85);
-  --success: oklch(65% 0.12 160);
-  --danger: oklch(60% 0.15 25);
-  --focus: oklch(62% 0.14 215);
+  --paper-doc: oklch(18% 0.02 270);
+  --paper-console: oklch(20% 0.02 270);
+  --paper-panel: oklch(22% 0.025 270);
+  --ink: oklch(93% 0.01 250);
+  --ink-soft: oklch(72% 0.02 250);
+  --line: oklch(32% 0.03 270);
+  --accent-route: oklch(75% 0.12 215);
+  --accent-ground: oklch(75% 0.12 290);
+  --accent-resolve: oklch(78% 0.12 85);
+  --success: oklch(75% 0.12 160);
+  --danger: oklch(70% 0.14 25);
+  --focus: oklch(75% 0.12 215);
 }
 ```
 

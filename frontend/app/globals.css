@@ -1,55 +1,52 @@
-/* Hallmark · macrostructure: Workbench · theme: Light paper shell + dark chat inset
+/* Hallmark · macrostructure: Workbench · theme: Full dark ops console
  * nav: N3 side-rail · footer: Ft8 status bar · genre: product
  * audience: hiring manager + support operator · tone: calm precise navigational
  *
- * Palette rule: light everywhere except the chat card. All colors are named
- * OKLCH tokens — no raw oklch() in rules below :root.
+ * Palette rule: dark everywhere — shell and chat share one night system.
+ * All colors are named OKLCH tokens — no raw oklch() in rules below :root.
  */
 
 :root {
-  /* Light shell surfaces */
-  --paper-doc: oklch(98.5% 0.008 240);
-  --paper-panel: oklch(96% 0.01 250);
-  --paper-panel-alt: oklch(96% 0.02 290);
-  --surface-active: oklch(93% 0.03 220);
-  --surface-hover: oklch(94% 0.02 250);
+  /* Dark shell surfaces */
+  --paper-doc: oklch(18% 0.02 270);
+  --paper-panel: oklch(22% 0.025 270);
+  --paper-panel-alt: oklch(24% 0.03 290);
+  --surface-active: oklch(28% 0.05 220);
+  --surface-hover: oklch(26% 0.03 250);
 
-  /* Dark chat inset surfaces */
-  --paper-console: oklch(24% 0.03 270);
-  --paper-console-raised: oklch(29% 0.035 270);
-  --paper-console-sunk: oklch(20% 0.025 270);
+  /* Dark chat card surfaces */
+  --paper-console: oklch(20% 0.02 270);
+  --paper-console-raised: oklch(25% 0.03 270);
+  --paper-console-sunk: oklch(16% 0.02 270);
 
   /* Ink */
-  --ink: oklch(22% 0.03 270);
-  --ink-soft: oklch(38% 0.04 270);
-  --ink-on-dark: oklch(93% 0.01 250);
-  --ink-soft-dark: oklch(72% 0.02 250);
-  --ink-neutral-dot: oklch(55% 0.02 260);
+  --ink: oklch(93% 0.01 250);
+  --ink-soft: oklch(72% 0.02 250);
   --ink-on-accent: oklch(20% 0.03 240);
 
   /* Lines */
-  --line: oklch(88% 0.012 250);
-  --line-console: oklch(42% 0.03 270);
+  --line: oklch(32% 0.03 270);
+  --line-console: oklch(40% 0.03 270);
   --msg-customer-line: oklch(48% 0.05 220);
   --msg-agent-line: oklch(48% 0.05 160);
 
-  /* Accents */
-  --accent-route: oklch(62% 0.14 215);
-  --accent-ground: oklch(62% 0.14 290);
-  --accent-resolve: oklch(68% 0.12 85);
-  --success: oklch(65% 0.12 160);
-  --danger: oklch(60% 0.15 25);
-  --focus: oklch(62% 0.14 215);
+  /* Accents (lifted for dark contrast) */
+  --accent-route: oklch(75% 0.12 215);
+  --accent-ground: oklch(75% 0.12 290);
+  --accent-resolve: oklch(78% 0.12 85);
+  --success: oklch(75% 0.12 160);
+  --danger: oklch(70% 0.14 25);
+  --focus: oklch(75% 0.12 215);
 
   /* Skeleton (must sit on the dark chat card) */
   --skeleton-a: oklch(31% 0.03 270);
   --skeleton-b: oklch(37% 0.03 270);
 
   /* Inspector section accents */
-  --tint-route: oklch(94% 0.03 215);
-  --tint-ground: oklch(94% 0.03 290);
-  --tint-resolve: oklch(95% 0.03 85);
-  --tint-neutral: oklch(94% 0.01 250);
+  --tint-route: oklch(28% 0.05 215);
+  --tint-ground: oklch(28% 0.05 290);
+  --tint-resolve: oklch(30% 0.04 85);
+  --tint-neutral: oklch(26% 0.02 250);
 
   --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-display: "Instrument Serif", Georgia, serif;
@@ -220,7 +217,7 @@ a {
 }
 
 .field select:hover {
-  border-color: var(--ink-neutral-dot);
+  border-color: var(--ink-soft);
 }
 
 .session-id {
@@ -251,13 +248,14 @@ a {
 
 .chat {
   background: var(--paper-console);
-  color: var(--ink-on-dark);
+  color: var(--ink);
+  border: 1px solid var(--line);
   border-radius: var(--radius-inset);
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  box-shadow: 0 1px 0 oklch(100% 0 0 / 0.04) inset;
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 0.25);
 }
 
 .msg {
@@ -278,7 +276,7 @@ a {
 
 .msg .who {
   font-size: 12.5px;
-  color: var(--ink-soft-dark);
+  color: var(--ink-soft);
   margin-bottom: 4px;
   display: flex;
   gap: 8px;
@@ -296,8 +294,7 @@ a {
 .dot.route { background: var(--accent-route); }
 .dot.ground { background: var(--accent-ground); }
 .dot.resolve { background: var(--accent-resolve); }
-.dot.neutral { background: var(--ink-neutral-dot); }
-.chat .dot.neutral { background: var(--ink-soft-dark); }
+.dot.neutral { background: var(--ink-soft); }
 
 .composer {
   display: flex;
@@ -319,13 +316,13 @@ a {
   border-radius: var(--radius-control);
   border: 1px solid var(--line-console);
   background: var(--paper-console-sunk);
-  color: var(--ink-on-dark);
+  color: var(--ink);
   padding: 0 12px;
   font: inherit;
 }
 
 .composer input::placeholder {
-  color: var(--ink-soft-dark);
+  color: var(--ink-soft);
 }
 
 .btn {
@@ -390,21 +387,21 @@ a {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--ink-neutral-dot);
+  background: var(--ink-soft);
   flex-shrink: 0;
 }
 
 .panel--route h2 { color: var(--accent-route); }
 .panel--route h2::before { background: var(--accent-route); }
-.panel--route { background: oklch(99% 0.005 215); }
+.panel--route { background: var(--tint-route); }
 
 .panel--ground h2 { color: var(--accent-ground); }
 .panel--ground h2::before { background: var(--accent-ground); }
-.panel--ground { background: oklch(99% 0.005 290); }
+.panel--ground { background: var(--tint-ground); }
 
 .panel--resolve h2 { color: var(--accent-resolve); }
 .panel--resolve h2::before { background: var(--accent-resolve); }
-.panel--resolve { background: oklch(99% 0.005 85); }
+.panel--resolve { background: var(--tint-resolve); }
 
 .panel--trace h2::before { background: var(--success); }
 .panel--trace h2 { color: var(--ink); }

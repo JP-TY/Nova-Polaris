@@ -11,16 +11,14 @@ import {
   ACCENT_DARK_TEXT,
   CITE_BG,
   CITATIONS,
-  DARK,
-  DARK_MSG,
+  CHAT_BG,
+  CHAT_INPUT,
+  CHAT_LINE,
+  CHAT_MSG,
   GROUND,
   INK,
-  INK_ON_DARK,
   INK_SOFT,
-  INK_SOFT_DARK,
-  INPUT_BG,
   LINE,
-  LINE_DARK,
   MSG_AGENT_LINE,
   MSG_CUSTOMER_LINE,
   NAV_ACTIVE,
@@ -30,10 +28,12 @@ import {
   QUERY,
   REFUND,
   REPLY,
+  RESOLVE,
   ROUTE,
   SESSION_ID,
   SKELETON_A,
   SKELETON_B,
+  SUCCESS,
   TRACE_ID,
   TINT_GROUND,
   TINT_RESOLVE,
@@ -95,7 +95,7 @@ const Panel: React.FC<{
       : accent === 'ground'
         ? GROUND
         : accent === 'resolve'
-          ? 'oklch(68% 0.12 85)'
+          ? RESOLVE
           : INK_SOFT;
   const bg =
     accent === 'route'
@@ -104,9 +104,8 @@ const Panel: React.FC<{
         ? TINT_GROUND
         : accent === 'resolve'
           ? TINT_RESOLVE
-          : PAPER;
-  const dot =
-    accent === 'trace' ? 'oklch(65% 0.12 160)' : accent ? h2Color : NEUTRAL_DOT;
+          : PANEL;
+  const dot = accent === 'trace' ? SUCCESS : accent ? h2Color : NEUTRAL_DOT;
   return (
     <div
       style={{
@@ -291,20 +290,22 @@ export const ConsoleScene: React.FC = () => {
 
           <section
             style={{
-              background: DARK,
-              color: INK_ON_DARK,
+              background: CHAT_BG,
+              color: INK,
+              border: `1px solid ${LINE}`,
               borderRadius: 14,
               padding: 16,
               display: 'flex',
               flexDirection: 'column',
               gap: 12,
+              boxShadow: '0 1px 2px oklch(0% 0 0 / 0.25)',
             }}
           >
             {!sending && (
               <div
                 style={{
-                  border: `1px solid ${LINE_DARK}`,
-                  background: DARK_MSG,
+                  border: `1px solid ${CHAT_LINE}`,
+                  background: CHAT_MSG,
                   borderRadius: 10,
                   padding: '10px 12px',
                 }}
@@ -312,14 +313,14 @@ export const ConsoleScene: React.FC = () => {
                 <div
                   style={{
                     fontSize: 11.5,
-                    color: INK_SOFT_DARK,
+                    color: INK_SOFT,
                     marginBottom: 3,
                     display: 'flex',
                     gap: 7,
                     alignItems: 'center',
                   }}
                 >
-                  <Dot color={INK_SOFT_DARK} />
+                  <Dot color={NEUTRAL_DOT} />
                   CommunicationAgent · ready
                 </div>
                 <p style={{margin: 0, fontSize: 13.5, lineHeight: 1.45}}>
@@ -333,7 +334,7 @@ export const ConsoleScene: React.FC = () => {
               <div
                 style={{
                   border: `1px solid ${MSG_CUSTOMER_LINE}`,
-                  background: DARK_MSG,
+                  background: CHAT_MSG,
                   borderRadius: 10,
                   padding: '10px 12px',
                 }}
@@ -341,7 +342,7 @@ export const ConsoleScene: React.FC = () => {
                 <div
                   style={{
                     fontSize: 11.5,
-                    color: INK_SOFT_DARK,
+                    color: INK_SOFT,
                     marginBottom: 3,
                     display: 'flex',
                     gap: 7,
@@ -371,7 +372,7 @@ export const ConsoleScene: React.FC = () => {
               <div
                 style={{
                   border: `1px solid ${MSG_AGENT_LINE}`,
-                  background: DARK_MSG,
+                  background: CHAT_MSG,
                   borderRadius: 10,
                   padding: '10px 12px',
                 }}
@@ -379,7 +380,7 @@ export const ConsoleScene: React.FC = () => {
                 <div
                   style={{
                     fontSize: 11.5,
-                    color: INK_SOFT_DARK,
+                    color: INK_SOFT,
                     marginBottom: 3,
                     display: 'flex',
                     gap: 7,
@@ -403,9 +404,9 @@ export const ConsoleScene: React.FC = () => {
                   flex: 1,
                   minHeight: 36,
                   borderRadius: 8,
-                  border: `1px solid ${LINE_DARK}`,
-                  background: INPUT_BG,
-                  color: INK_ON_DARK,
+                  border: `1px solid ${CHAT_LINE}`,
+                  background: CHAT_INPUT,
+                  color: INK,
                   padding: '0 12px',
                   display: 'flex',
                   alignItems: 'center',
@@ -485,7 +486,7 @@ export const ConsoleScene: React.FC = () => {
                           v.dot === 'route'
                             ? ROUTE
                             : v.dot === 'resolve'
-                              ? 'oklch(68% 0.12 85)'
+                              ? RESOLVE
                               : NEUTRAL_DOT
                         }
                         size={8}
