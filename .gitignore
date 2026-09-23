@@ -25,3 +25,4 @@ __pycache__/
 .vscode/
 .idea/
 frontend/next-env.d.ts
+demo/node_modules/
