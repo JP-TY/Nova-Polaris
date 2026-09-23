@@ -1,29 +1,63 @@
-/* Hallmark · macrostructure: Workbench · theme: Terminal console inset + Newsprint docs
+/* Hallmark · macrostructure: Workbench · theme: Light paper shell + dark chat inset
  * nav: N3 side-rail · footer: Ft8 status bar · genre: product
  * audience: hiring manager + support operator · tone: calm precise navigational
+ *
+ * Palette rule: light everywhere except the chat card. All colors are named
+ * OKLCH tokens — no raw oklch() in rules below :root.
  */
 
 :root {
+  /* Light shell surfaces */
   --paper-doc: oklch(98.5% 0.008 240);
-  --paper-console: oklch(24% 0.03 270);
   --paper-panel: oklch(96% 0.01 250);
-  --paper-panel-dark: oklch(28% 0.035 270);
+  --paper-panel-alt: oklch(96% 0.02 290);
+  --surface-active: oklch(93% 0.03 220);
+  --surface-hover: oklch(94% 0.02 250);
+
+  /* Dark chat inset surfaces */
+  --paper-console: oklch(24% 0.03 270);
+  --paper-console-raised: oklch(29% 0.035 270);
+  --paper-console-sunk: oklch(20% 0.025 270);
+
+  /* Ink */
   --ink: oklch(22% 0.03 270);
   --ink-soft: oklch(38% 0.04 270);
   --ink-on-dark: oklch(93% 0.01 250);
   --ink-soft-dark: oklch(72% 0.02 250);
+  --ink-neutral-dot: oklch(55% 0.02 260);
+  --ink-on-accent: oklch(20% 0.03 240);
+
+  /* Lines */
   --line: oklch(88% 0.012 250);
-  --line-dark: oklch(38% 0.03 270);
+  --line-console: oklch(42% 0.03 270);
+  --msg-customer-line: oklch(48% 0.05 220);
+  --msg-agent-line: oklch(48% 0.05 160);
+
+  /* Accents */
   --accent-route: oklch(62% 0.14 215);
   --accent-ground: oklch(62% 0.14 290);
   --accent-resolve: oklch(68% 0.12 85);
   --success: oklch(65% 0.12 160);
   --danger: oklch(60% 0.15 25);
   --focus: oklch(62% 0.14 215);
+
+  /* Skeleton (must sit on the dark chat card) */
+  --skeleton-a: oklch(31% 0.03 270);
+  --skeleton-b: oklch(37% 0.03 270);
+
+  /* Inspector section accents */
+  --tint-route: oklch(94% 0.03 215);
+  --tint-ground: oklch(94% 0.03 290);
+  --tint-resolve: oklch(95% 0.03 85);
+  --tint-neutral: oklch(94% 0.01 250);
+
   --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-display: "Instrument Serif", Georgia, serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-control: 8px;
   --radius: 10px;
+  --radius-inset: 14px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -96,6 +130,8 @@ a {
   min-height: 100dvh;
 }
 
+/* ── Rail ─────────────────────────────────────────────── */
+
 .rail {
   border-right: 1px solid var(--line);
   background: var(--paper-panel);
@@ -136,7 +172,7 @@ a {
   color: var(--ink);
   text-decoration: none;
   padding: 9px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   border: 1px solid transparent;
   min-height: 44px;
   display: flex;
@@ -144,14 +180,57 @@ a {
 }
 
 .rail a[aria-current="page"] {
-  background: oklch(93% 0.03 220);
+  background: var(--surface-active);
   border-color: var(--line);
   font-weight: 600;
 }
 
 .rail a:hover {
-  background: oklch(94% 0.02 250);
+  background: var(--surface-hover);
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.field select {
+  min-height: 44px;
+  width: 100%;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line);
+  background: var(--paper-doc);
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  padding: 0 10px;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.field select:hover {
+  border-color: var(--ink-neutral-dot);
+}
+
+.session-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+}
+
+/* ── Stream / chat ────────────────────────────────────── */
 
 .stream {
   padding: 28px clamp(16px, 4vw, 48px) 40px;
@@ -173,27 +252,28 @@ a {
 .chat {
   background: var(--paper-console);
   color: var(--ink-on-dark);
-  border-radius: 14px;
+  border-radius: var(--radius-inset);
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  box-shadow: 0 1px 0 oklch(100% 0 0 / 0.04) inset;
 }
 
 .msg {
-  border: 1px solid var(--line-dark);
-  background: var(--paper-panel-dark);
+  border: 1px solid var(--line-console);
+  background: var(--paper-console-raised);
   border-radius: var(--radius);
   padding: 12px 14px;
   animation: rise 220ms var(--ease-out);
 }
 
 .msg.customer {
-  border-color: oklch(45% 0.05 220);
+  border-color: var(--msg-customer-line);
 }
 
 .msg.agent {
-  border-color: oklch(45% 0.05 160);
+  border-color: var(--msg-agent-line);
 }
 
 .msg .who {
@@ -210,12 +290,14 @@ a {
   height: 9px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .dot.route { background: var(--accent-route); }
 .dot.ground { background: var(--accent-ground); }
 .dot.resolve { background: var(--accent-resolve); }
-.dot.neutral { background: var(--ink-soft-dark); }
+.dot.neutral { background: var(--ink-neutral-dot); }
+.chat .dot.neutral { background: var(--ink-soft-dark); }
 
 .composer {
   display: flex;
@@ -234,21 +316,25 @@ a {
 .composer input {
   flex: 1;
   min-height: 44px;
-  border-radius: 8px;
-  border: 1px solid var(--line-dark);
-  background: oklch(20% 0.025 270);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line-console);
+  background: var(--paper-console-sunk);
   color: var(--ink-on-dark);
   padding: 0 12px;
   font: inherit;
 }
 
+.composer input::placeholder {
+  color: var(--ink-soft-dark);
+}
+
 .btn {
   min-height: 44px;
   padding: 0 18px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--accent-route);
   background: var(--accent-route);
-  color: oklch(20% 0.03 240);
+  color: var(--ink-on-accent);
   font: inherit;
   font-weight: 650;
   cursor: pointer;
@@ -260,6 +346,15 @@ a {
 .btn:hover { filter: brightness(1.06); }
 .btn:active { transform: scale(0.96); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.skeleton {
+  border-radius: var(--radius-control);
+  background: linear-gradient(90deg, var(--skeleton-a), var(--skeleton-b));
+  min-height: 44px;
+  animation: shimmer 1.2s var(--ease-out) infinite alternate;
+}
+
+/* ── Inspector ────────────────────────────────────────── */
 
 .inspector {
   border-left: 1px solid var(--line);
@@ -278,11 +373,41 @@ a {
 }
 
 .panel h2 {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   margin: 0 0 10px;
   font-family: var(--font-body);
-  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
 }
+
+.panel h2::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-neutral-dot);
+  flex-shrink: 0;
+}
+
+.panel--route h2 { color: var(--accent-route); }
+.panel--route h2::before { background: var(--accent-route); }
+.panel--route { background: oklch(99% 0.005 215); }
+
+.panel--ground h2 { color: var(--accent-ground); }
+.panel--ground h2::before { background: var(--accent-ground); }
+.panel--ground { background: oklch(99% 0.005 290); }
+
+.panel--resolve h2 { color: var(--accent-resolve); }
+.panel--resolve h2::before { background: var(--accent-resolve); }
+.panel--resolve { background: oklch(99% 0.005 85); }
+
+.panel--trace h2::before { background: var(--success); }
+.panel--trace h2 { color: var(--ink); }
 
 .timeline {
   list-style: none;
@@ -302,10 +427,10 @@ a {
 
 .cite {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   padding: 10px 12px;
   margin-bottom: 8px;
-  background: oklch(96% 0.02 290);
+  background: var(--paper-panel-alt);
 }
 
 .cite .src {
@@ -317,16 +442,19 @@ a {
   font-size: 0.92rem;
 }
 
-.skeleton {
-  border-radius: 8px;
-  background: linear-gradient(90deg, oklch(90% 0.01 250), oklch(94% 0.01 250));
-  min-height: 44px;
-  animation: shimmer 1.2s var(--ease-out) infinite alternate;
+.empty-hint {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.45;
 }
+
+/* ── Status bar ───────────────────────────────────────── */
 
 .statusbar {
   grid-column: 1 / -1;
   border-top: 1px solid var(--line);
+  background: var(--paper-panel);
   padding: 10px 18px;
   font-size: 0.85rem;
   color: var(--ink-soft);
@@ -341,7 +469,7 @@ a {
 }
 
 @keyframes shimmer {
-  from { opacity: 0.6; }
+  from { opacity: 0.65; }
   to { opacity: 1; }
 }
 

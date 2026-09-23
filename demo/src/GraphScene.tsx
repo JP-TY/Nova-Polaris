@@ -3,6 +3,7 @@ import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from
 import {Fonts, useEntrance} from './shared';
 import {
   DARK,
+  DARK_MSG,
   GROUND,
   INK_ON_DARK,
   INK_SOFT_DARK,
@@ -379,7 +380,7 @@ export const GraphScene: React.FC = () => {
               boxSizing: 'border-box',
               opacity: Math.min(1, p * 1.3),
               transform: `translateY(${(1 - p) * 16}px) scale(${0.96 + p * 0.04})`,
-              background: 'oklch(28% 0.035 270)',
+              background: DARK_MSG,
               border: `1.5px solid ${act || polAct ? n.color : LINE_DARK}`,
               boxShadow: act || polAct ? `0 0 0 3px ${n.color}33, 0 0 18px ${n.color}44` : 'none',
               borderRadius: 10,
@@ -454,7 +455,7 @@ export const GraphScene: React.FC = () => {
               style={{
                 opacity: 0.25 + op * 0.75,
                 transform: `translateX(${(1 - op) * 12}px)`,
-                background: 'oklch(28% 0.035 270)',
+                background: DARK_MSG,
                 border: `1px solid ${op > 0.5 ? ROUTE : LINE_DARK}`,
                 borderRadius: 8,
                 padding: '8px 12px',

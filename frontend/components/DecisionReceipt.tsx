@@ -1,7 +1,7 @@
 import type { RefundDecision } from "../lib/mock";
 
 export default function DecisionReceipt({ refund }: { refund?: RefundDecision }) {
-  if (!refund) return <p>No refund evaluated in this turn.</p>;
+  if (!refund) return <p className="empty-hint">No refund evaluated in this turn.</p>;
   return (
     <div className="receipt">
       <p>

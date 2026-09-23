@@ -2,7 +2,12 @@ import type { Citation } from "../lib/mock";
 
 export default function CitationRow({ citations }: { citations: Citation[] }) {
   if (!citations.length) {
-    return <p>No grounded passages yet. The PolicyAgent cites source file plus score, or states the answer is not in policy.</p>;
+    return (
+      <p className="empty-hint">
+        No grounded passages yet. The PolicyAgent cites source file plus score, or states the
+        answer is not in policy.
+      </p>
+    );
   }
   return (
     <div>
