@@ -1,5 +1,3 @@
-import type { WorkflowVersion } from "../lib/mock";
-
 const DOT: Record<string, string> = {
   Orchestrator: "neutral",
   InventoryAgent: "route",
@@ -8,9 +6,13 @@ const DOT: Record<string, string> = {
   CommunicationAgent: "neutral"
 };
 
-export default function Timeline({ versions }: { versions: WorkflowVersion[] }) {
+export default function Timeline({ versions }: { versions: { version: number; agent: string; summary: string }[] }) {
   if (!versions.length) {
-    return <p>Send a request to open a session. Versions v0 to vN appear here with optimistic locking.</p>;
+    return (
+      <p className="empty-hint">
+        Send a request to open a session. Versions v0 to vN appear here with optimistic locking.
+      </p>
+    );
   }
   return (
     <ol className="timeline">

@@ -7,7 +7,7 @@
 
 Scene: hiring manager scans README and live console in a bright office, then opens the X-Ray trace and WorkflowState timeline to verify grounding. Needs instant readability, not night-ops glow.
 
-Decision: light paper default with dark console inset. Avoids first-order reflex (observability equals dark blue) and second-order trap (terminal-native dark mode everywhere).
+Decision: light paper default with dark chat inset only. The shell (rail, inspector, status bar) stays light; the conversation card is the single dark object. Avoids first-order reflex (observability equals dark blue) and second-order trap (terminal-native dark mode everywhere). All raw oklch values live as named tokens in globals.css.
 
 Color strategy: Restrained. Tinted neutrals plus one accent at or under 10 percent, with two semantic roles used deliberately (cite violet, risk amber).
 

@@ -54,21 +54,15 @@ export default function OpsConsole() {
           <a href="#evidence">Evals</a>
           <a href="#trace">Traces</a>
         </nav>
-        <div>
+        <div className="field">
           <label htmlFor="customer">Customer</label>
-          <select
-            id="customer"
-            className="mono"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            style={{ minHeight: 44, width: "100%", marginTop: 6 }}
-          >
+          <select id="customer" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
             <option value="CUST-001">CUST-001 · Premium</option>
             <option value="CUST-002">CUST-002 · Standard</option>
             <option value="CUST-003">CUST-003 · Premium</option>
             <option value="CUST-004">CUST-004 · Standard</option>
           </select>
-          <p className="brand-tag mono" style={{ marginTop: 8 }}>Session: {sessionId}</p>
+          <p className="session-id">Session: {sessionId}</p>
         </div>
       </aside>
 
@@ -121,30 +115,33 @@ export default function OpsConsole() {
       </main>
 
       <aside className="inspector" aria-label="Evidence">
-        <section className="panel" aria-label="Workflow state">
+        <section className="panel panel--route" aria-label="Workflow state">
           <h2>Route · WorkflowState</h2>
           <Timeline versions={result?.versions ?? []} />
         </section>
-        <section className="panel" id="evidence" aria-label="Grounded evidence">
+        <section className="panel panel--ground" id="evidence" aria-label="Grounded evidence">
           <h2>Ground · Citations</h2>
           <CitationRow citations={result?.citations ?? []} />
         </section>
-        <section className="panel" aria-label="Refund decision">
+        <section className="panel panel--resolve" aria-label="Refund decision">
           <h2>Resolve · Decision</h2>
           <DecisionReceipt refund={result?.refund} />
         </section>
-        <section className="panel" id="trace" aria-label="Trace">
+        <section className="panel panel--trace" id="trace" aria-label="Trace">
           <h2>Trace receipt</h2>
           {result?.traceId ? (
             <p className="mono">X-Ray: {result.traceId}<br />Session: {result.sessionId}</p>
           ) : (
-            <p>No trace yet. Each live request publishes one X-Ray trace for the Service Map screenshot.</p>
+            <p className="empty-hint">
+              No trace yet. Each live request publishes one X-Ray trace for the Service Map
+              screenshot.
+            </p>
           )}
         </section>
       </aside>
 
       <footer className="statusbar">
-        <span>.\u2009Nova-Polaris console · Next.js</span>
+        <span>Nova-Polaris console · Next.js</span>
         <span className="mono">Haiku routing · Sonnet workers</span>
         <span className="mono">3 KBs · Guardrailed · Traced</span>
       </footer>

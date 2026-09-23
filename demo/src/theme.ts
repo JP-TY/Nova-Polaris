@@ -12,12 +12,20 @@ export const RESOLVE = 'oklch(68% 0.12 85)';
 export const SUCCESS = 'oklch(65% 0.12 160)';
 export const DANGER = 'oklch(60% 0.15 25)';
 export const INK_SOFT_DARK = 'oklch(72% 0.02 250)';
-export const LINE_DARK = 'oklch(38% 0.03 270)';
-export const DARK_MSG = 'oklch(28% 0.035 270)';
+export const LINE_DARK = 'oklch(42% 0.03 270)';
+export const DARK_MSG = 'oklch(29% 0.035 270)';
 export const INPUT_BG = 'oklch(20% 0.025 270)';
 export const CITE_BG = 'oklch(96% 0.02 290)';
 export const NAV_ACTIVE = 'oklch(93% 0.03 220)';
 export const ACCENT_DARK_TEXT = 'oklch(20% 0.03 240)';
+export const NEUTRAL_DOT = 'oklch(55% 0.02 260)';
+export const SKELETON_A = 'oklch(31% 0.03 270)';
+export const SKELETON_B = 'oklch(37% 0.03 270)';
+export const MSG_CUSTOMER_LINE = 'oklch(48% 0.05 220)';
+export const MSG_AGENT_LINE = 'oklch(48% 0.05 160)';
+export const TINT_ROUTE = 'oklch(99% 0.005 215)';
+export const TINT_GROUND = 'oklch(99% 0.005 290)';
+export const TINT_RESOLVE = 'oklch(99% 0.005 85)';
 
 export const AGENTS = [
   {name: 'InventoryAgent', desc: 'DynamoDB lookups', color: ROUTE},

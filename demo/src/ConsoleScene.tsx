@@ -21,7 +21,10 @@ import {
   INPUT_BG,
   LINE,
   LINE_DARK,
+  MSG_AGENT_LINE,
+  MSG_CUSTOMER_LINE,
   NAV_ACTIVE,
+  NEUTRAL_DOT,
   PAPER,
   PANEL,
   QUERY,
@@ -29,7 +32,12 @@ import {
   REPLY,
   ROUTE,
   SESSION_ID,
+  SKELETON_A,
+  SKELETON_B,
   TRACE_ID,
+  TINT_GROUND,
+  TINT_RESOLVE,
+  TINT_ROUTE,
   VERSIONS,
 } from './theme';
 
@@ -76,19 +84,58 @@ const Rise: React.FC<{show: boolean; children: React.ReactNode}> = ({show, child
   );
 };
 
-const Panel: React.FC<{title: string; children: React.ReactNode}> = ({title, children}) => (
-  <div
-    style={{
-      border: `1px solid ${LINE}`,
-      borderRadius: 10,
-      background: PAPER,
-      padding: '10px 12px',
-    }}
-  >
-    <div style={{fontSize: 13, fontWeight: 650, marginBottom: 8}}>{title}</div>
-    {children}
-  </div>
-);
+const Panel: React.FC<{
+  title: string;
+  accent?: 'route' | 'ground' | 'resolve' | 'trace';
+  children: React.ReactNode;
+}> = ({title, accent, children}) => {
+  const h2Color =
+    accent === 'route'
+      ? ROUTE
+      : accent === 'ground'
+        ? GROUND
+        : accent === 'resolve'
+          ? 'oklch(68% 0.12 85)'
+          : INK_SOFT;
+  const bg =
+    accent === 'route'
+      ? TINT_ROUTE
+      : accent === 'ground'
+        ? TINT_GROUND
+        : accent === 'resolve'
+          ? TINT_RESOLVE
+          : PAPER;
+  const dot =
+    accent === 'trace' ? 'oklch(65% 0.12 160)' : accent ? h2Color : NEUTRAL_DOT;
+  return (
+    <div
+      style={{
+        border: `1px solid ${LINE}`,
+        borderRadius: 10,
+        background: bg,
+        padding: '10px 12px',
+      }}
+    >
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 650,
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          marginBottom: 8,
+          color: h2Color,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 7,
+        }}
+      >
+        <span style={{width: 7, height: 7, borderRadius: 7, background: dot, flexShrink: 0}} />
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+};
 
 const Empty: React.FC<{text: string}> = ({text}) => (
   <p style={{margin: 0, fontSize: 12, lineHeight: 1.4, color: INK_SOFT}}>{text}</p>
@@ -285,7 +332,7 @@ export const ConsoleScene: React.FC = () => {
             <Rise show={sending}>
               <div
                 style={{
-                  border: '1px solid oklch(45% 0.05 220)',
+                  border: `1px solid ${MSG_CUSTOMER_LINE}`,
                   background: DARK_MSG,
                   borderRadius: 10,
                   padding: '10px 12px',
@@ -312,7 +359,7 @@ export const ConsoleScene: React.FC = () => {
               <div
                 style={{
                   borderRadius: 8,
-                  background: `linear-gradient(90deg, oklch(90% 0.01 250), oklch(94% 0.01 250))`,
+                  background: `linear-gradient(90deg, ${SKELETON_A}, ${SKELETON_B})`,
                   minHeight: 36,
                   opacity: shimmer,
                 }}
@@ -323,7 +370,7 @@ export const ConsoleScene: React.FC = () => {
             <Rise show={done}>
               <div
                 style={{
-                  border: '1px solid oklch(45% 0.05 160)',
+                  border: `1px solid ${MSG_AGENT_LINE}`,
                   background: DARK_MSG,
                   borderRadius: 10,
                   padding: '10px 12px',
@@ -416,7 +463,7 @@ export const ConsoleScene: React.FC = () => {
             overflow: 'hidden',
           }}
         >
-          <Panel title="Route · WorkflowState">
+          <Panel title="Route · WorkflowState" accent="route">
             {vCount === 0 ? (
               <Empty text="Send a request to open a session. Versions v0 to vN appear here with optimistic locking." />
             ) : (
@@ -439,7 +486,7 @@ export const ConsoleScene: React.FC = () => {
                             ? ROUTE
                             : v.dot === 'resolve'
                               ? 'oklch(68% 0.12 85)'
-                              : INK_SOFT_DARK
+                              : NEUTRAL_DOT
                         }
                         size={8}
                       />
@@ -454,7 +501,7 @@ export const ConsoleScene: React.FC = () => {
             )}
           </Panel>
 
-          <Panel title="Ground · Citations">
+          <Panel title="Ground · Citations" accent="ground">
             {cCount === 0 ? (
               <Empty text="No grounded passages yet. The PolicyAgent cites source file plus score, or states the answer is not in policy." />
             ) : (
@@ -485,7 +532,7 @@ export const ConsoleScene: React.FC = () => {
             )}
           </Panel>
 
-          <Panel title="Resolve · Decision">
+          <Panel title="Resolve · Decision" accent="resolve">
             {!showRefund ? (
               <Empty text="No refund evaluated in this turn." />
             ) : (
@@ -501,7 +548,7 @@ export const ConsoleScene: React.FC = () => {
             )}
           </Panel>
 
-          <Panel title="Trace receipt">
+          <Panel title="Trace receipt" accent="trace">
             {!showTrace ? (
               <Empty text="No trace yet. Each live request publishes one X-Ray trace for the Service Map screenshot." />
             ) : (
